@@ -1,12 +1,21 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Main {
 
-    public static void main(String[] args) {
-        Matrix B = new Matrix(3, 6);
-        B.fillInWithRandomValues();
-        System.out.println(B.getEntries());
+    public static void main(String[] args) throws UncorrectedElementIndexes {
+        Matrix a = new Matrix(2, 2);
+        a.fillInWithValues();
+       // System.out.println(a.getSpecifiedElement(2, 2));
+        System.out.println(a.getSpecifiedRow(0));
+        System.out.println(a.getSpecifiedColumn(1));
+        System.out.println(Arrays.toString(a.getSize()));
+
+//        Matrix B = new Matrix(4, 2);
+//        B.fillInWithRandomValues();
+//        System.out.println(B.getEntries());
+
     }
 }
 
@@ -77,6 +86,32 @@ public class Matrix {
             entries.add(i, arrayList);
         }
     }
+
+    public int getSpecifiedElement(int numberRow, int numberColumn) throws UncorrectedElementIndexes {
+        if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
+            throw new UncorrectedElementIndexes();
+        }
+        return this.entries.get(numberRow).get(numberColumn);
+    }
+
+    public ArrayList<Integer> getSpecifiedRow(int rowNumber) throws UncorrectedElementIndexes {
+        if (rowNumber >= this.size[0]) {
+            throw new UncorrectedElementIndexes();
+        }
+        return this.entries.get(rowNumber);
+    }
+
+    public ArrayList<Integer> getSpecifiedColumn(int columnNumber) throws UncorrectedElementIndexes {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (columnNumber >= size[1]) {
+            throw new UncorrectedElementIndexes();
+        }
+        for (ArrayList<Integer> entry : entries) {
+            result.add(entry.get(columnNumber));
+        }
+        return result;
+    }
+
 
 
 }
