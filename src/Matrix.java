@@ -6,16 +6,18 @@ import java.util.Scanner;
 class Main {
 
     public static void main(String[] args) throws UncorrectedElementIndexes {
-        Matrix a = new Matrix(2, 2);
-        a.fillInWithValues();
-       // System.out.println(a.getSpecifiedElement(2, 2));
-        System.out.println(a.getSpecifiedRow(0));
-        System.out.println(a.getSpecifiedColumn(1));
-        System.out.println(Arrays.toString(a.getSize()));
+//        Matrix a = new Matrix(2, 2);
+//        a.fillInWithValues();
+//        // System.out.println(a.getSpecifiedElement(2, 2));
+//        System.out.println(a.getSpecifiedRow(0));
+//        System.out.println(a.getSpecifiedColumn(1));
+//        System.out.println(Arrays.toString(a.getSize()));
 
 //        Matrix B = new Matrix(4, 2);
 //        B.fillInWithRandomValues();
 //        System.out.println(B.getEntries());
+        System.out.println(Matrix.getDiagonalMatrix(new Integer[]{2, 5, 7}).getEntries());
+
 
     }
 }
@@ -127,5 +129,21 @@ public class Matrix {
         int result = Objects.hash(entries);
         result = 31 * result + Arrays.hashCode(size);
         return result;
+    }
+
+    public static Matrix getDiagonalMatrix(Integer[] vector) {
+        Matrix diagonalMatrix = new Matrix(vector.length, vector.length);
+        for (int i = 0; i < diagonalMatrix.size[0]; i++) {
+            ArrayList<Integer> arrayList = new ArrayList<>();
+            for (int j = 0; j < diagonalMatrix.size[1]; j++) {
+                if (j == i) {
+                    arrayList.add(vector[i]);
+                    continue;
+                }
+                arrayList.add(0);
+            }
+            diagonalMatrix.entries.add(i, arrayList);
+        }
+        return diagonalMatrix;
     }
 }
