@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 class Main {
@@ -25,6 +26,7 @@ public class Matrix {
 
     public Matrix() {
         this.size = new int[0];
+        this.entries = new ArrayList<>();
     }
 
     public Matrix(int rowCount, int columnCount) {
@@ -48,7 +50,7 @@ public class Matrix {
     }
 
     public void fillInWithValues() {
-        Scanner scanner = new Scanner(System.in);//.useDelimiter("\\n");
+        Scanner scanner = new Scanner(System.in);
         int rowNum = 0;
         while (scanner.hasNextLine()) {
             ArrayList<Integer> integerArrayList = new ArrayList<>();
@@ -112,6 +114,18 @@ public class Matrix {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix matrix = (Matrix) o;
+        return Arrays.equals(size, matrix.size) && Objects.equals(entries, matrix.entries);
+    }
 
-
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(entries);
+        result = 31 * result + Arrays.hashCode(size);
+        return result;
+    }
 }
