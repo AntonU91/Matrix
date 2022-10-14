@@ -1,5 +1,5 @@
 public class UncorrectedElementIndexes extends Throwable {
     public UncorrectedElementIndexes() {
-        System.out.println("Некоректные значения индексов елемента!");
+        System.out.println("Incorrect values of item indexes!");
     }
 }

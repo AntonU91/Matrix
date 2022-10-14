@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 
 public final class MatrixChild extends Matrix {
-    private int[] size;
-    private ArrayList<ArrayList<Double>> entries;
 
     public MatrixChild(int rowCount, int columnCount, boolean isEmpty) {
         super(rowCount, columnCount, isEmpty);
@@ -15,4 +13,5 @@ public final class MatrixChild extends Matrix {
     public MatrixChild(Matrix anotherMatrix) {
         super(anotherMatrix);
     }
+
 }

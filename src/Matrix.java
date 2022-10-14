@@ -2,24 +2,12 @@ import java.util.*;
 
 class Main {
 
-    public static void main(String[] args) throws UncorrectedElementIndexes {
-        Matrix a = new Matrix(3, 3);
-        System.out.println(a);
-//        System.out.println(a);
-//        System.out.println(Matrix.matrixDeterminant(a));
-        System.out.println(Matrix.invertMatrix(a));
+    public static void main(String[] args) throws UncorrectedElementIndexes, InvalidMatrixInverse {
 
-//        // System.out.println(a.getSpecifiedElement(2, 2));
-//        System.out.println(a.getSpecifiedRow(0));
-//        System.out.println(a.getSpecifiedColumn(1));
-//        System.out.println(Arrays.toString(a.getSize()));
-
-//        Matrix B = new Matrix(4, 2);
-//        B.fillInWithRandomValues();
-//        System.out.println(B.getEntries());
-        // System.out.println(Matrix.getDiagonalMatrix(new Double[]{2, 5, 7}).getEntries());
-
-
+        ArrayList<Double> arrayList =  new ArrayList<>();
+        MatrixChild matrixChild = new MatrixChild(3, 3);
+        matrixChild.fillInWithRandomValues();
+        System.out.println(Matrix.invertMatrix(matrixChild));
     }
 }
 
@@ -31,14 +19,16 @@ public class Matrix {
         this.size = new int[2];
         size[0] = rowCount;
         size[1] = columnCount;
-        this.entries = new ArrayList<>();
-        for (int i = 0; i < size[0]; i++) {
-            ArrayList<Double> doubles = new ArrayList<>();
-            for (int j = 0; j < size[1]; j++) {
-                doubles.add(0.0);
+        if (isEmpty) {
+            this.entries = new ArrayList<>();
+            for (int i = 0; i < size[0]; i++) {
+                ArrayList<Double> doubles = new ArrayList<>();
+                for (int j = 0; j < size[1]; j++) {
+                    doubles.add(0.0);
+                }
+                entries.add(i, doubles);
             }
-            entries.add(i, doubles);
-        }
+        } else entries = new ArrayList<>();
 
     }
 
@@ -169,14 +159,8 @@ public class Matrix {
         return stringBuilder.toString();
     }
 
-    public static double matrixDeterminant(Matrix mat) {
-        double[][] matrix = new double[mat.size[0]][mat.size[0]];
-
-        for (int i = 0; i < mat.entries.size(); i++) {
-            for (int j = 0; j < mat.entries.get(i).size(); j++) {
-                matrix[i][j] = mat.entries.get(i).get(j);
-            }
-        }
+    private static double matrixDeterminant(Matrix mat) {
+        double[][] matrix = getArrayFromList(mat);
 
         double[][] temporary;
         double result = 0;
@@ -203,30 +187,48 @@ public class Matrix {
                     }
                 }
             }
-            Matrix tempMatrix = new Matrix(temporary.length, temporary.length);
-            for (int l = 0; l < temporary.length; l++) {
-                ArrayList<Double> arrayList = new ArrayList<>();
-                for (int z = 0; z < temporary.length; z++) {
-                    arrayList.add(z, temporary[l][z]);
-                }
-                tempMatrix.entries.add(l, arrayList);
-            }
-
-
+            Matrix tempMatrix = getMatrix(temporary);
             result += matrix[0][i] * Math.pow(-1, (double) i) * matrixDeterminant(tempMatrix);
         }
         return (result);
     }
 
-    public static Matrix invertMatrix(Matrix mat) {
+    private static double[][] getArrayFromList(Matrix mat) {
         double[][] matrix = new double[mat.size[0]][mat.size[0]];
-        double[][] auxiliaryMatrix, invertedMatrix;
-        int[] index;
         for (int i = 0; i < mat.entries.size(); i++) {
             for (int j = 0; j < mat.entries.get(i).size(); j++) {
                 matrix[i][j] = mat.entries.get(i).get(j);
             }
         }
+        return matrix;
+    }
+
+    private static Matrix getMatrix(double[][] temporary) {
+        Matrix tempMatrix = new Matrix(temporary.length, temporary.length);
+        for (int l = 0; l < temporary.length; l++) {
+            ArrayList<Double> arrayList = new ArrayList<>();
+            for (int z = 0; z < temporary.length; z++) {
+                arrayList.add(z, temporary[l][z]);
+            }
+            tempMatrix.entries.add(l, arrayList);
+        }
+        return tempMatrix;
+    }
+
+    public static Matrix invertMatrix(Matrix mat) throws InvalidMatrixInverse {
+        if (mat.size[0] != mat.size[1]) {
+            System.out.println("You cannot invert not  а square matrix");
+            throw new InvalidMatrixInverse();
+        }
+        if (matrixDeterminant(mat) == 0) {
+            System.out.println("You cannot invert matrix with determinant value equals zero ");
+            throw new InvalidMatrixInverse();
+        }
+
+        double[][] matrix = getArrayFromList(mat);
+        double[][] auxiliaryMatrix, invertedMatrix;
+        int[] index;
+
 
         auxiliaryMatrix = new double[matrix.length][matrix.length];
         invertedMatrix = new double[matrix.length][matrix.length];
@@ -259,19 +261,11 @@ public class Matrix {
                 invertedMatrix[j][i] /= matrix[index[j]][j];
             }
         }
-        Matrix invertedMatrix1 = new Matrix(invertedMatrix.length, invertedMatrix.length);
-        for (int l = 0; l < invertedMatrix.length; l++) {
-            ArrayList<Double> arrayList = new ArrayList<>();
-            for (int z = 0; z < invertedMatrix.length; z++) {
-                arrayList.add(z, invertedMatrix[l][z]);
-            }
-            invertedMatrix1.entries.add(l, arrayList);
-        }
 
-        return (invertedMatrix1);
+        return (getMatrix(invertedMatrix));
     }
 
-    public static void transformToUpperTriangle(double[][] matrix, int[] index) {
+    private static void transformToUpperTriangle(double[][] matrix, int[] index) {
         double[] c;
         double c0, c1, pi0, pi1, pj;
         int itmp, k;
@@ -292,12 +286,9 @@ public class Matrix {
                     c1 = c0;
                 }
             }
-
             c[i] = c1;
         }
-
         k = 0;
-
         for (int j = 0; j < (matrix.length - 1); ++j) {
             pi1 = 0;
 
@@ -310,7 +301,6 @@ public class Matrix {
                     k = i;
                 }
             }
-
             itmp = index[j];
             index[j] = index[k];
             index[k] = itmp;
