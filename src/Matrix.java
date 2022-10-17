@@ -3,11 +3,13 @@ import java.util.*;
 class Main {
 
     public static void main(String[] args) throws UncorrectedElementIndexes, InvalidMatrixInverse {
+        Matrix a = new Matrix(4 ,2 );
+        a.fillInWithRandomValues();
+        System.out.println(a);
+        a.replaceSpecificElementValue();
+        System.out.println(a);
 
-        ArrayList<Double> arrayList =  new ArrayList<>();
-        MatrixChild matrixChild = new MatrixChild(3, 3);
-        matrixChild.fillInWithRandomValues();
-        System.out.println(Matrix.invertMatrix(matrixChild));
+
     }
 }
 
@@ -53,7 +55,7 @@ public class Matrix {
     }
 
     public void fillInWithValues() {
-        System.out.printf("Set the value of a matrix of size %d x %d. Each line in the console is a matrix row. To finish entering the matrix, press Enter on the new empty line\n.", size[0], size[1]);
+        System.out.printf("Set the value of a matrix of size %d x %d. Each line in the console is a matrix row. To finish entering the matrix, press Enter on the new empty line.\n", size[0], size[1]);
         Scanner scanner = new Scanner(System.in);
         int rowNum = 0;
         while (scanner.hasNextLine()) {
@@ -93,18 +95,57 @@ public class Matrix {
         }
     }
 
+     public  void replaceSpecificElementValue () throws UncorrectedElementIndexes {
+         System.out.println("Input the  indexes of element you want change , than new value of specified element, divide numbers via space");
+         Scanner scanner = new Scanner(System.in);
+         if (scanner.hasNextLine()) {
+             int numberRow;
+             int numberColumn;
+             double elementValue;
+             String retrievedLine = scanner.nextLine();
+             if (retrievedLine.matches("(\\s*\\d+){3}")) {
+                 String[] retrievedNumbers = retrievedLine.replaceAll("(^\\s+)|(\\s+$)|(\\s{2})", "").split("\\s");
+                 numberRow = Integer.parseInt(retrievedNumbers[0]);
+                 numberColumn = Integer.parseInt(retrievedNumbers[1]);
+                 elementValue = Integer.parseInt(retrievedNumbers[2]);
+                 if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
+                     throw new UncorrectedElementIndexes();
+                 }
+                 entries.get(numberRow).set(numberColumn,elementValue);
+             }
+         }
+     }
+
     public double getSpecifiedElement(int numberRow, int numberColumn) throws UncorrectedElementIndexes {
         if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
             throw new UncorrectedElementIndexes();
         }
         return this.entries.get(numberRow).get(numberColumn);
     }
+    public double getSpecifiedElementViaConsole() throws UncorrectedElementIndexes {
+        System.out.println("Input the indexes of element  you want retrieve, divide them via space");
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            int numberRow;
+            int numberColumn;
+            String retrievedLine = scanner.nextLine();
+            if (retrievedLine.matches("(\\s*\\d+){2}")) {
+                String[] retrievedNumbers = retrievedLine.replaceAll("(^\\s+)|(\\s+$)|(\\s{2})", "").split("\\s");
+                numberRow = Integer.parseInt(retrievedNumbers[0]);
+                numberColumn = Integer.parseInt(retrievedNumbers[1]);
+                if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
+                    throw new UncorrectedElementIndexes();
+                } else return entries.get(numberRow).get(numberColumn);
+            }
+        }
+        throw new UncorrectedElementIndexes();
+    }
 
     public ArrayList<Double> getSpecifiedRow(int rowNumber) throws UncorrectedElementIndexes {
         if (rowNumber >= this.size[0]) {
             throw new UncorrectedElementIndexes();
         }
-        return this.entries.get(rowNumber);
+        return entries.get(rowNumber);
     }
 
     public ArrayList<Double> getSpecifiedColumn(int columnNumber) throws UncorrectedElementIndexes {
@@ -261,7 +302,6 @@ public class Matrix {
                 invertedMatrix[j][i] /= matrix[index[j]][j];
             }
         }
-
         return (getMatrix(invertedMatrix));
     }
 
