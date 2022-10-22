@@ -3,19 +3,22 @@ import java.util.*;
 class Main {
 
     public static void main(String[] args) throws UncorrectedElementIndexes, InvalidMatrixInverse {
-        Matrix a = new Matrix(4 ,2 );
-        a.fillInWithRandomValues();
-        System.out.println(a);
-        a.replaceSpecificElementValue();
-        System.out.println(a);
-
+//        Matrix a = new Matrix(4, 4);
+//        a.fillInWithRandomValues();
+//        MatrixImmutable copyA = new MatrixImmutable(a);
+//        System.out.println(a);
+//        System.out.println(copyA);
+//        a.replaceSpecificElementValue();
+//        System.out.println(a);
+//        System.out.println(copyA);
 
     }
 }
 
 public class Matrix {
     private final int[] size;
-    private final ArrayList<ArrayList<Double>> entries;
+    private ArrayList<ArrayList<Double>> entries;
+
 
     public Matrix(int rowCount, int columnCount, boolean isEmpty) {
         this.size = new int[2];
@@ -54,7 +57,17 @@ public class Matrix {
         return entries;
     }
 
-    public void fillInWithValues() {
+
+    public void setEntries(ArrayList<ArrayList<Double>> entries) {
+        this.entries = entries;
+    }
+
+    public final void fillInWithValues() {
+        if (!this.getEntries().isEmpty()) {
+            System.out.println("You cannot change all elements of fulfilled matrix repeatedly. Instead, use method replaceSpecificElementValue()");
+            return;
+        }
+
         System.out.printf("Set the value of a matrix of size %d x %d. Each line in the console is a matrix row. To finish entering the matrix, press Enter on the new empty line.\n", size[0], size[1]);
         Scanner scanner = new Scanner(System.in);
         int rowNum = 0;
@@ -84,8 +97,11 @@ public class Matrix {
         }
     }
 
-    public void fillInWithRandomValues() {
-
+    public final void fillInWithRandomValues() {
+        if (!this.getEntries().isEmpty()) {
+            System.out.println("You cannot change all elements of fulfilled matrix repeatedly. Instead, use method replaceSpecificElementValue()");
+            return;
+        }
         for (int i = 0; i < size[0]; i++) {
             ArrayList<Double> arrayList = new ArrayList<>();
             for (int j = 0; j < size[1]; j++) {
@@ -95,26 +111,30 @@ public class Matrix {
         }
     }
 
-     public  void replaceSpecificElementValue () throws UncorrectedElementIndexes {
-         System.out.println("Input the  indexes of element you want change , than new value of specified element, divide numbers via space");
-         Scanner scanner = new Scanner(System.in);
-         if (scanner.hasNextLine()) {
-             int numberRow;
-             int numberColumn;
-             double elementValue;
-             String retrievedLine = scanner.nextLine();
-             if (retrievedLine.matches("(\\s*\\d+){3}")) {
-                 String[] retrievedNumbers = retrievedLine.replaceAll("(^\\s+)|(\\s+$)|(\\s{2})", "").split("\\s");
-                 numberRow = Integer.parseInt(retrievedNumbers[0]);
-                 numberColumn = Integer.parseInt(retrievedNumbers[1]);
-                 elementValue = Integer.parseInt(retrievedNumbers[2]);
-                 if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
-                     throw new UncorrectedElementIndexes();
-                 }
-                 entries.get(numberRow).set(numberColumn,elementValue);
-             }
-         }
-     }
+    public final void replaceSpecificElementValue() throws UncorrectedElementIndexes {
+        if (this instanceof MatrixImmutable) {
+            System.out.println("You cannot change elements in MatrixImmutable objects");
+            return;
+        }
+        System.out.println("Input the  indexes of element you want change , than new value of specified element, divide numbers via space");
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            int numberRow;
+            int numberColumn;
+            double elementValue;
+            String retrievedLine = scanner.nextLine();
+            if (retrievedLine.matches("(\\s*\\d+){3}")) {
+                String[] retrievedNumbers = retrievedLine.replaceAll("(^\\s+)|(\\s+$)|(\\s{2})", "").split("\\s");
+                numberRow = Integer.parseInt(retrievedNumbers[0]);
+                numberColumn = Integer.parseInt(retrievedNumbers[1]);
+                elementValue = Integer.parseInt(retrievedNumbers[2]);
+                if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
+                    throw new UncorrectedElementIndexes();
+                }
+                entries.get(numberRow).set(numberColumn, elementValue);
+            }
+        }
+    }
 
     public double getSpecifiedElement(int numberRow, int numberColumn) throws UncorrectedElementIndexes {
         if (numberRow >= this.size[0] || numberColumn >= this.size[1]) {
@@ -122,6 +142,7 @@ public class Matrix {
         }
         return this.entries.get(numberRow).get(numberColumn);
     }
+
     public double getSpecifiedElementViaConsole() throws UncorrectedElementIndexes {
         System.out.println("Input the indexes of element  you want retrieve, divide them via space");
         Scanner scanner = new Scanner(System.in);
